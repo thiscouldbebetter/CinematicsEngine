@@ -1,0 +1,494 @@
+
+<html>
+
+<body>
+
+<div id="divMain"></div>
+  
+<script type="text/javascript">
+
+// main
+
+function main()
+{
+	new ImageLoader().loadImages
+	(
+		[
+			new Image("../Content/Demo/Rick.png"),
+			new Image("../Content/Demo/Jane.png"),
+			new Image("../Content/Demo/Spot.png"),
+			new Image("../Content/Demo/Suburbia.png"),
+		],
+		main2
+	);
+}
+
+function main2(imageLoader)
+{
+	var imagesBySource = imageLoader.imagesBySource;
+
+	var scene = new Scene
+	(
+		"Scene0",
+		new Background("Suburbia", imagesBySource.get("../Content/Demo/Suburbia.png")),
+		// actors
+		[
+			new Actor("Rick", imagesBySource.get("../Content/Demo/Rick.png")),
+			new Actor("Jane", imagesBySource.get("../Content/Demo/Jane.png")),
+			new Actor("Spot", imagesBySource.get("../Content/Demo/Spot.png")),
+		],
+		// lines
+		[
+			new Line("Rick", "[enters left]"),
+			new Line("Jane", "[enters right]"),
+			new Line("Rick", "Jane, have you seen Spot?"),
+			new Line("Jane", "His NAME is Mr. Beansprouts."),
+			new Line("Rick", "For the hundreth time, no it's NOT."),
+			new Line("Jane", "Yes, it is.  I'll prove it."),
+			new Line("Jane", "Come here, Mr. Beansprouts!"),
+			new Line("Rick", "..."),
+			new Line("Jane", "Mr. Beeeeeeansprouts!"),
+			new Line("Rick", "..."),
+			new Line("Jane", "RIGHT NOW, MR. BEANSPROUTS!"),
+			new Line("Rick", "..."),
+			new Line("Jane", "Stupid dog.  Forget it."),
+			new Line("Jane", "[exits]"),
+			new Line("Rick", "..."),
+			new Line("Spot", "[enters right]"),
+			new Line("Spot", "Is she gone?"),
+			new Line("Spot", "I've told her a million times..."),
+			new Line("Spot", "...it's DOCTOR Beansprouts."),
+			new Line("Spot", "Anyway, you wanted to see me?"),
+			new Line("Rick", "Shut up and get in the crate, Spot."),
+			new Line("Spot", "Yes, sir."),
+		]
+	);
+
+	var viewSize = new Coords(200, 150);
+
+	Globals.Instance.initialize
+	(
+		10, // fontHeight
+		viewSize, 
+		scene
+	);
+}
+
+// classes
+
+class Actor
+{
+	constructor(name, image)
+	{
+		this.name = name;
+		this.image = image;
+	}
+}
+
+class Background
+{
+	constructor(name, image)
+	{
+		this.name = name;
+		this.image = image;
+	}
+}
+
+class Coords
+{
+	constructor(x, y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+}
+
+class DisplayHelper
+{
+	drawShowing(showing)
+	{
+		var scene = showing.scene;
+
+		var backgroundImage = scene.background.image.systemImage;
+		this.graphics.drawImage
+		(
+			backgroundImage,
+			0, 0
+		);
+
+		var actorNames = showing.actorNamesLeftAndRight;
+
+		var widthDivisor = 4;
+
+		var actorPositions = 
+		[
+			actorPos = new Coords
+			(
+				this.viewSize.x / widthDivisor,
+				this.viewSize.y / 2
+			),
+
+			actorPos = new Coords
+			(
+				(widthDivisor - 1) * this.viewSize.x / widthDivisor,
+				this.viewSize.y / 2
+			),
+		];
+
+		for (var i = 0; i < actorNames.length; i++)
+		{
+			var actorName = actorNames[i];
+			if (actorName != null)
+			{
+				var actorPos = actorPositions[i];
+				var actor = scene.actorsByName.get(actorName);
+				var actorImage = actor.image
+
+				this.graphics.drawImage
+				(
+					actorImage.systemImage,
+					actorPos.x - actorImage.size().x / 2, 
+					actorPos.y - actorImage.size().y / 2
+				);
+			}
+		}
+		
+		var line = showing.lineCurrent();
+		var text = line.text;
+		var isTextStageDirection = (text.indexOf("[") == 0);
+
+		if (isTextStageDirection == false)
+		{
+			var textWidth = this.graphics.measureText(text).width;
+			var textAsLines = [ text ];
+			var numberOfTextLines = textAsLines.length;
+
+			var speechBubbleMargin = 8;
+			var textMargin = 8;
+			var tailWidthHalf = speechBubbleMargin / 2;
+			var tailLength = speechBubbleMargin;
+
+			var actorIndex = actorNames.indexOf(line.actorName);
+			var actorPos = actorPositions[actorIndex];
+
+			var speechBubbleSize = new Coords
+			(
+				textWidth + textMargin * 2,
+				numberOfTextLines * this.fontHeight + textMargin * 2
+			);
+
+			var speechBubblePosX = actorPos.x - textWidth / 2 - textMargin;
+
+			if (actorIndex == 0)
+			{
+				if (speechBubblePosX < 0)
+				{
+					speechBubblePosX = speechBubbleMargin;
+				}
+			}
+			else
+			{
+				if (speechBubblePosX + speechBubbleSize.x > this.viewSize.x)
+				{
+					speechBubblePosX = 
+						this.viewSize.x 
+						- speechBubbleMargin 
+						- textMargin * 2 
+						- textWidth;
+				}
+			}
+
+			var speechBubblePos = new Coords(speechBubblePosX, this.fontHeight);
+			var tailPosX = actorPos.x;
+			var cornerRadius = textMargin;
+
+			this.graphics.beginPath();
+			this.graphics.moveTo(speechBubblePos.x + cornerRadius, speechBubblePos.y);
+			this.graphics.arcTo
+			(
+				speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y,
+				speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y + cornerRadius,
+				cornerRadius
+			);
+			this.graphics.arcTo
+			(
+				speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y + speechBubbleSize.y,
+				speechBubblePos.x + speechBubbleSize.x - cornerRadius, speechBubblePos.y + speechBubbleSize.y,
+				cornerRadius
+			);
+
+			this.graphics.lineTo(tailPosX + tailWidthHalf, speechBubblePos.y + speechBubbleSize.y);
+			this.graphics.lineTo(tailPosX, speechBubblePos.y + speechBubbleSize.y + tailLength * 2);
+			this.graphics.lineTo(tailPosX - tailWidthHalf, speechBubblePos.y + speechBubbleSize.y);
+
+			this.graphics.arcTo
+			(
+				speechBubblePos.x, speechBubblePos.y + speechBubbleSize.y,
+				speechBubblePos.x, speechBubblePos.y + speechBubbleSize.y - cornerRadius,
+				cornerRadius
+			);
+			this.graphics.arcTo
+			(
+				speechBubblePos.x, speechBubblePos.y,
+				speechBubblePos.x + cornerRadius, speechBubblePos.y,
+				cornerRadius
+			);
+			this.graphics.fillStyle = "White";
+			this.graphics.fill();
+
+			this.graphics.fillStyle = "Gray";
+			this.graphics.fillText
+			(
+				text,
+				speechBubblePos.x + textMargin, 
+				speechBubblePos.y + textMargin + this.fontHeight * .8
+			);
+
+		}
+	}
+
+	initialize(fontHeight, viewSize)
+	{
+		this.fontHeight = fontHeight;
+		this.viewSize = viewSize;
+
+		var canvas = document.createElement("canvas");
+		canvas.width = this.viewSize.x;
+		canvas.height = this.viewSize.y;
+		var divMain = document.getElementById("divMain");
+		divMain.appendChild(canvas);
+		this.graphics = canvas.getContext("2d");
+		this.graphics.font = "" + fontHeight + "px sans-serif";
+
+		this.fillStyle = "LightGray";
+	}
+}
+
+class Globals
+{
+	static Instance = new Globals();
+
+	initialize(fontHeight, viewSize, scene)
+	{
+		this.displayHelper = new DisplayHelper();
+		this.displayHelper.initialize(fontHeight, viewSize);
+
+		this.inputHelper = new InputHelper();
+
+		this.showing = new Showing(scene);
+		this.showing.initialize();
+
+		var millisecondsPerTimerTick = 100;
+		setInterval
+		(
+			this.handleEventTimerTick.bind(this), 
+			millisecondsPerTimerTick
+		);
+
+		this.inputHelper.initialize();	
+	}
+
+	// events
+
+	handleEventTimerTick()
+	{
+		this.showing.updateForTimerTick();
+	}
+}
+
+class Image
+{
+	constructor(source)
+	{
+		this.source = source;
+	}
+
+	size()
+	{
+		return new Coords(this.systemImage.width, this.systemImage.height);
+	}
+}
+
+class ImageLoader
+{
+	loadImages(images, callback)
+	{
+		this.images = images;
+		this.imagesBySource = new Map(this.images.map(x => [x.source, x]));
+		this.callback = callback;
+		this.numberOfImagesLoaded = 0;
+
+		for (var i = 0; i < this.images.length; i++)
+		{
+			var image = this.images[i];
+			var systemImage = document.createElement("img");
+			systemImage.onload = this.loadImages_ImageLoaded.bind(this);
+			image.systemImage = systemImage;
+			systemImage.src = image.source;
+		}
+	}
+
+	loadImages_ImageLoaded(event)
+	{
+		this.numberOfImagesLoaded++;
+		if (this.numberOfImagesLoaded >= this.images.length)
+		{
+			this.callback(this);
+		}
+	}
+}
+
+class InputHelper
+{
+	constructor()
+	{
+		this.isMousePressed = false;
+	}
+
+	initialize()
+	{
+		document.body.onmousedown = this.handleEventMouseDown.bind(this);
+	}
+
+	handleEventMouseDown(event)
+	{
+		this.isMousePressed = true;
+	}
+}
+
+class Line
+{
+	constructor(actorName, text)
+	{
+		this.actorName = actorName;
+		this.text = text;
+	}
+}
+
+class Scene
+{
+	constructor(name, background, actors, lines)
+	{
+		this.name = name;
+		this.background = background;
+		this.actors = actors;
+		this.lines = lines;
+
+		this.actors = actors;
+		this.actorsByName = new Map(this.actors.map(x => [x.name, x]));
+	}
+}
+
+class Showing
+{
+	constructor(scene)
+	{
+		this.scene = scene;
+		this.actorNamesLeftAndRight = [];
+	}
+
+	draw()
+	{
+		Globals.Instance.displayHelper.drawShowing(this);
+	}
+
+	initialize()
+	{
+		this.isComplete = false;
+		this.lineIndexCurrent = null;
+		this.lineCurrentAdvance();
+		this.draw();
+	}
+
+	lineCurrent()
+	{
+		return (this.scene.lines[this.lineIndexCurrent]);
+	}
+
+	lineCurrentAdvance()
+	{
+		if (this.isComplete)
+		{
+			return;
+		}
+		
+		if (this.lineIndexCurrent == null)
+		{
+			this.lineIndexCurrent = -1;
+		}
+
+		while (true)
+		{
+			var lineIndexNext = this.lineIndexCurrent + 1;
+
+			if (lineIndexNext >= this.scene.lines.length)
+			{
+				break;
+			}
+
+			this.lineIndexCurrent = lineIndexNext;
+			var lineCurrent = this.lineCurrent();
+			var lineText = lineCurrent.text;
+
+			var isLineTextStageDirection = (lineText.indexOf("[") == 0);
+			if (isLineTextStageDirection == false)
+			{
+				break;
+			}
+			else
+			{
+				var enters = "[enters ";
+				var exits = "[exits ";
+				var left = "left";
+				var right = "right";	
+
+				if (lineText.indexOf(enters) == 0)
+				{
+					var direction = lineText.substr(enters.length);
+					if (direction.indexOf(left) == 0)
+					{
+						this.actorNamesLeftAndRight[0] = lineCurrent.actorName;
+					}
+					else
+					{
+						this.actorNamesLeftAndRight[1] = lineCurrent.actorName;
+					}
+				}
+				else if (lineText.indexOf(exits) == 0)
+				{
+					var direction = lineText.substr(enters.length);
+					if (direction.indexOf(left) == 0)
+					{
+						this.actorNamesLeftAndRight[0] = null;
+					}
+					else
+					{
+						this.actorNamesLeftAndRight[1] = null;
+					}
+				}
+			}
+		}
+	}
+
+	updateForTimerTick()
+	{
+		var inputHelper = Globals.Instance.inputHelper;
+
+		if (inputHelper.isMousePressed == true)
+		{
+			inputHelper.isMousePressed = false;
+			this.lineCurrentAdvance();
+			this.draw();
+		}
+	}
+}
+
+// run
+
+main();
+
+</script>
+
+</body>
+</html>
+    
