@@ -1,9 +1,25 @@
 
 class Image
 {
-	constructor(source)
+	constructor(name, source)
 	{
+		this.name = name;
 		this.source = source;
+
+		this.load();
+	}
+
+	load()
+	{
+		this.isLoaded = false;
+		var image = this;
+		var systemImage = document.createElement("img");
+		systemImage.onload = (e) =>
+		{
+			image.isLoaded = true;
+		}
+		this.systemImage = systemImage;
+		systemImage.src = image.source;
 	}
 
 	size()

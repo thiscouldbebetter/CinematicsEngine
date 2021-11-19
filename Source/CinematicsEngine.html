@@ -3,8 +3,69 @@
 
 <body>
 
-<div id="divMain"></div>
-  
+<div id ="divUi">
+
+	<h3>Cinematics Engine</h3>
+
+	<p>
+		Specify the script for a scene in the text box and click the "Run" button
+		to see it played out in visual form.
+	</p>
+
+	<label>Scene as Text:</label>
+	<br />
+	<textarea id="textareaScene" cols="80" rows="16">
+
+[Size: 200 150 10]
+
+[Scene: We Need to Talk About Spot]
+===================================
+
+[Background: Suburbia ../Content/Demo/Suburbia.png]
+
+[Role: Rick ../Content/Demo/Rick.png]
+[Role: Jane ../Content/Demo/Jane.png]
+[Role: Spot ../Content/Demo/Spot.png]
+
+Rick: [enters left]
+Jane: [enters right]
+Rick: Jane, have you seen Spot?
+Jane: His NAME is Mr. Beansprouts.
+Rick: For the hundredth time, no it's NOT.
+Jane: Yes, it is.  I'll prove it.
+Jane: Come here, Mr. Beansprouts!
+Rick: ...
+Jane: Mr. Beeeeeeansprouts!
+Rick: ...
+[Font 12]
+Jane: RIGHT NOW, MR. BEANSPROUTS!
+[Font 10]
+Rick: ...
+Jane: Stupid dog.  Forget it.
+Jane: [exits]
+Rick: ...
+Spot: [enters right]
+Spot: Is she gone?
+Spot: I've told her a million times...
+Spot: ...it's DOCTOR Beansprouts.
+Spot: Anyway, you wanted to see me?
+Rick: Shut up and get in the crate, Spot.
+Spot: Yes, sir.
+
+	</textarea>
+	<br />
+
+	<button onclick="buttonRun_Clicked();">Run</button>
+	<br />
+
+	<div>
+		<label>Output:</label>
+		<br />
+		<div id="divOutput"></div>
+	</div>
+
+</div>
+
 <script type="text/javascript" src="Actor.js"></script>
 <script type="text/javascript" src="Background.js"></script>
 <script type="text/javascript" src="Coords.js"></script>
@@ -19,76 +80,24 @@
 
 <script type="text/javascript">
 
-// main
+// UI event handlers.
 
-function main()
+function buttonRun_Clicked()
 {
-	new ImageLoader().loadImages
-	(
-		[
-			new Image("../Content/Demo/Rick.png"),
-			new Image("../Content/Demo/Jane.png"),
-			new Image("../Content/Demo/Spot.png"),
-			new Image("../Content/Demo/Suburbia.png"),
-		],
-		main2
-	);
-}
+	var d = document;
+	var textareaScene = d.getElementById("textareaScene");
+	var sceneAsString = textareaScene.value;
 
-function main2(imageLoader)
-{
-	var imagesBySource = imageLoader.imagesBySource;
-
-	var scene = new Scene
+	var scene = Scene.fromString
 	(
-		"Scene0",
-		new Background("Suburbia", imagesBySource.get("../Content/Demo/Suburbia.png")),
-		// actors
-		[
-			new Actor("Rick", imagesBySource.get("../Content/Demo/Rick.png")),
-			new Actor("Jane", imagesBySource.get("../Content/Demo/Jane.png")),
-			new Actor("Spot", imagesBySource.get("../Content/Demo/Spot.png")),
-		],
-		// lines
-		[
-			new Line("Rick", "[enters left]"),
-			new Line("Jane", "[enters right]"),
-			new Line("Rick", "Jane, have you seen Spot?"),
-			new Line("Jane", "His NAME is Mr. Beansprouts."),
-			new Line("Rick", "For the hundreth time, no it's NOT."),
-			new Line("Jane", "Yes, it is.  I'll prove it."),
-			new Line("Jane", "Come here, Mr. Beansprouts!"),
-			new Line("Rick", "..."),
-			new Line("Jane", "Mr. Beeeeeeansprouts!"),
-			new Line("Rick", "..."),
-			new Line("Jane", "RIGHT NOW, MR. BEANSPROUTS!"),
-			new Line("Rick", "..."),
-			new Line("Jane", "Stupid dog.  Forget it."),
-			new Line("Jane", "[exits]"),
-			new Line("Rick", "..."),
-			new Line("Spot", "[enters right]"),
-			new Line("Spot", "Is she gone?"),
-			new Line("Spot", "I've told her a million times..."),
-			new Line("Spot", "...it's DOCTOR Beansprouts."),
-			new Line("Spot", "Anyway, you wanted to see me?"),
-			new Line("Rick", "Shut up and get in the crate, Spot."),
-			new Line("Spot", "Yes, sir."),
-		]
+		sceneAsString
 	);
 
-	var viewSize = new Coords(200, 150);
-
-	Globals.Instance.initialize
+	Globals.Instance.runScene
 	(
-		10, // fontHeight
-		viewSize, 
 		scene
 	);
 }
-
-// run
-
-main();
 
 </script>
 

@@ -143,16 +143,17 @@ class DisplayHelper
 		}
 	}
 
-	initialize(fontHeight, viewSize)
+	initialize(viewSize, fontHeight)
 	{
-		this.fontHeight = fontHeight;
 		this.viewSize = viewSize;
+		this.fontHeight = fontHeight;
 
 		var canvas = document.createElement("canvas");
 		canvas.width = this.viewSize.x;
 		canvas.height = this.viewSize.y;
-		var divMain = document.getElementById("divMain");
-		divMain.appendChild(canvas);
+		var divOutput = document.getElementById("divOutput");
+		divOutput.innerHTML = "";
+		divOutput.appendChild(canvas);
 		this.graphics = canvas.getContext("2d");
 		this.graphics.font = "" + fontHeight + "px sans-serif";
 

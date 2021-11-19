@@ -14,6 +14,11 @@ class Showing
 
 	initialize()
 	{
+		this.scene.imagesLoad(this.initialize_ImagesLoaded.bind(this));
+	}
+
+	initialize_ImagesLoaded(imageLoader)
+	{
 		this.isComplete = false;
 		this.lineIndexCurrent = null;
 		this.lineCurrentAdvance();
@@ -37,7 +42,8 @@ class Showing
 			this.lineIndexCurrent = -1;
 		}
 
-		while (true)
+		var isAwaitingInput = false;
+		while (isAwaitingInput == false)
 		{
 			var lineIndexNext = this.lineIndexCurrent + 1;
 
@@ -48,53 +54,18 @@ class Showing
 
 			this.lineIndexCurrent = lineIndexNext;
 			var lineCurrent = this.lineCurrent();
-			var lineText = lineCurrent.text;
 
-			var isLineTextStageDirection = (lineText.indexOf("[") == 0);
-			if (isLineTextStageDirection == false)
-			{
-				break;
-			}
-			else
-			{
-				var enters = "[enters ";
-				var exits = "[exits ";
-				var left = "left";
-				var right = "right";	
-
-				if (lineText.indexOf(enters) == 0)
-				{
-					var direction = lineText.substr(enters.length);
-					if (direction.indexOf(left) == 0)
-					{
-						this.actorNamesLeftAndRight[0] = lineCurrent.actorName;
-					}
-					else
-					{
-						this.actorNamesLeftAndRight[1] = lineCurrent.actorName;
-					}
-				}
-				else if (lineText.indexOf(exits) == 0)
-				{
-					var direction = lineText.substr(enters.length);
-					if (direction.indexOf(left) == 0)
-					{
-						this.actorNamesLeftAndRight[0] = null;
-					}
-					else
-					{
-						this.actorNamesLeftAndRight[1] = null;
-					}
-				}
-			}
+			isAwaitingInput = lineCurrent.runForShowing(this);
 		}
+
+		Globals.Instance.displayHelper.drawShowing(this);
 	}
 
 	updateForTimerTick()
 	{
 		var inputHelper = Globals.Instance.inputHelper;
 
-		if (inputHelper.isMousePressed == true)
+		if (inputHelper.isMousePressed)
 		{
 			inputHelper.isMousePressed = false;
 			this.lineCurrentAdvance();

@@ -1,9 +1,15 @@
 
 class ImageLoader
 {
+	imageByName(imageName)
+	{
+		return this.imagesByName.get(imageName);
+	}
+
 	loadImages(images, callback)
 	{
 		this.images = images;
+		this.imagesByName = new Map(this.images.map(x => [x.name, x]));
 		this.imagesBySource = new Map(this.images.map(x => [x.source, x]));
 		this.callback = callback;
 		this.numberOfImagesLoaded = 0;

@@ -3,10 +3,12 @@ class Globals
 {
 	static Instance = new Globals();
 
-	initialize(fontHeight, viewSize, scene)
+	runScene(scene)
 	{
+		var fontHeight = scene.fontHeightInPixels;
+		var viewSize = scene.viewSizeInPixels;
+
 		this.displayHelper = new DisplayHelper();
-		this.displayHelper.initialize(fontHeight, viewSize);
 
 		this.inputHelper = new InputHelper();
 
@@ -20,7 +22,7 @@ class Globals
 			millisecondsPerTimerTick
 		);
 
-		this.inputHelper.initialize();	
+		this.inputHelper.initialize();
 	}
 
 	// events
