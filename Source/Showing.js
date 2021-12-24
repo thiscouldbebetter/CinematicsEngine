@@ -4,12 +4,33 @@ class Showing
 	constructor(scene)
 	{
 		this.scene = scene;
-		this.actorNamesLeftAndRight = [];
+
+		this.actorDispositions = [];
+	}
+
+	actorByName(actorName)
+	{
+		return this.scene.actorByName(actorName);
+	}
+
+	actorRemoveByName(actorName)
+	{
+		var actorDisposition =
+			this.actorDispositions.find
+			(
+				x => x.actorName == actorName
+			);
+
+		this.actorDispositions.splice
+		(
+			this.actorDispositions.indexOf(actorDisposition),
+			1
+		);
 	}
 
 	draw()
 	{
-		Globals.Instance.displayHelper.drawShowing(this);
+		Globals.Instance.display.drawShowing(this);
 	}
 
 	initialize()
@@ -55,10 +76,12 @@ class Showing
 			this.lineIndexCurrent = lineIndexNext;
 			var lineCurrent = this.lineCurrent();
 
-			isAwaitingInput = lineCurrent.runForShowing(this);
+			isAwaitingInput =
+				(lineCurrent.speech != null);
+			lineCurrent.runForShowing(this);
 		}
 
-		Globals.Instance.displayHelper.drawShowing(this);
+		Globals.Instance.display.drawShowing(this);
 	}
 
 	updateForTimerTick()

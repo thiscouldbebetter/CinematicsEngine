@@ -8,7 +8,7 @@ class Globals
 		var fontHeight = scene.fontHeightInPixels;
 		var viewSize = scene.viewSizeInPixels;
 
-		this.displayHelper = new DisplayHelper();
+		this.display = new Display();
 
 		this.inputHelper = new InputHelper();
 

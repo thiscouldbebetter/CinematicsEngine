@@ -5,14 +5,18 @@ class Scene
 	(
 		name,
 		fontHeightInPixels,
-		viewSizeInPixels,
+		camera,
+		marks,
 		lines
 	)
 	{
 		this.name = name;
 		this.fontHeightInPixels = fontHeightInPixels;
-		this.viewSizeInPixels = viewSizeInPixels;
+		this.camera = camera;
+		this.marks = marks || [];
 		this.lines = lines;
+
+		this.marksByName = new Map();
 
 		this.actors = [];
 		this.actorsByName = new Map();
@@ -22,7 +26,10 @@ class Scene
 	{
 		var newline = "\n";
 		var sceneAsTextLines = sceneAsString.split(newline);
-		var lines = sceneAsTextLines.map(
+		var lines = sceneAsTextLines.filter
+		(
+			x => x.length > 0
+		).map(
 			x => Line.fromString(x)
 		).filter
 		(
@@ -34,7 +41,8 @@ class Scene
 		(
 			null, // name
 			null, // fontHeightInPixels 
-			null, // viewSizeInPixels
+			null, // camera
+			null, // marks
 			lines
 		);
 
@@ -45,6 +53,18 @@ class Scene
 	{
 		this.actors.push(actorToAdd);
 		this.actorsByName.set(actorToAdd.name, actorToAdd);
+	}
+
+	actorByName(actorName)
+	{
+		return this.actorsByName.get(actorName);
+	}
+
+	actorRemoveByName(actorToRemoveName)
+	{
+		var actorToRemove = this.actorByName(actorToRemoveName);
+		this.actors.splice(this.actors.indexOf(actorToRemove), 1);
+		this.actorsByName.delete(actorToRemoveName);
 	}
 
 	backgroundSet(background)
@@ -64,29 +84,41 @@ class Scene
 		for (var i = 0; i < this.lines.length; i++)
 		{
 			var line = this.lines[i];
-			var lineText = line.text;
-			// Trim opening and closing brackets.
-			lineText = lineText.substr(1, lineText.length - 2);
-			var lineTextParts = lineText.split(" ");
-			var operationName = lineTextParts[0];
-
-			var doesLineRequireMedia =
-			(
-				operationName == "Background:"
-				|| operationName == "Role:"
-			);
-
-			if (doesLineRequireMedia)
+			var stageDirection = line.stageDirection;
+			if (stageDirection != null)
 			{
-				var imageName = lineTextParts[1];
-				var imageSource = lineTextParts[2];
+				var stageDirectionParts = stageDirection.split(" ");
+				var operationName = stageDirectionParts[0];
 
-				var image = new Image(imageName, imageSource);
-				imagesToLoad.push(image);
+				var doesLineRequireMedia =
+				(
+					operationName == "Background:"
+					|| operationName == "Role:"
+				);
+
+				if (doesLineRequireMedia)
+				{
+					var imageName = stageDirectionParts[1];
+					var imageSource = stageDirectionParts[2];
+
+					var image = new Image(imageName, imageSource);
+					imagesToLoad.push(image);
+				}
 			}
 		}
 
 		this.imageLoader = new ImageLoader();
 		this.imageLoader.loadImages(imagesToLoad, callback);
+	}
+
+	markAdd(markToAdd)
+	{
+		this.marks.push(markToAdd);
+		this.marksByName.set(markToAdd.name, markToAdd);
+	}
+
+	markByName(markName)
+	{
+		return this.marksByName.get(markName);
 	}
 }

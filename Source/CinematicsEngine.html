@@ -16,12 +16,20 @@
 	<br />
 	<textarea id="textareaScene" cols="80" rows="16">
 
-[Size: 200 150 10]
+[CameraViewSize: 200 150 100]
+[CameraMoveTo: 0 -100 25]
+[CameraPointAt: 0 0 0]
+[Font: 10]
 
 [Scene: We Need to Talk About Spot]
 ===================================
 
 [Background: Suburbia ../Content/Demo/Suburbia.png]
+
+[Mark: left 50 0 0]
+[Mark: right -50 0 0]
+[Mark: right_downstage -50 30 0]
+[Mark: right_upstage -50 -30 0]
 
 [Role: Rick ../Content/Demo/Rick.png]
 [Role: Jane ../Content/Demo/Jane.png]
@@ -35,13 +43,13 @@ Rick: For the hundredth time, no it's NOT.
 Jane: Yes, it is.  I'll prove it.
 Jane: Come here, Mr. Beansprouts!
 Rick: ...
-Jane: Mr. Beeeeeeansprouts!
+Jane: [moves right_downstage] Mr. Beeeeeeansprouts!
 Rick: ...
-[Font 12]
-Jane: RIGHT NOW, MR. BEANSPROUTS!
-[Font 10]
+[Font: 12]
+Jane: [moves right_upstage] RIGHT NOW, MR. BEANSPROUTS!
+[Font: 10]
 Rick: ...
-Jane: Stupid dog.  Forget it.
+Jane: [moves right] Stupid dog.  Forget it.
 Jane: [exits]
 Rick: ...
 Spot: [enters right]
@@ -51,6 +59,11 @@ Spot: ...it's DOCTOR Beansprouts.
 Spot: Anyway, you wanted to see me?
 Rick: Shut up and get in the crate, Spot.
 Spot: Yes, sir.
+Rick: [exits]
+Spot: [exits]
+
+[Title: THE END]
+
 
 	</textarea>
 	<br />
@@ -67,14 +80,18 @@ Spot: Yes, sir.
 </div>
 
 <script type="text/javascript" src="Actor.js"></script>
+<script type="text/javascript" src="ActorDisposition.js"></script>
 <script type="text/javascript" src="Background.js"></script>
+<script type="text/javascript" src="Camera.js"></script>
 <script type="text/javascript" src="Coords.js"></script>
-<script type="text/javascript" src="DisplayHelper.js"></script>
+<script type="text/javascript" src="Display.js"></script>
 <script type="text/javascript" src="Globals.js"></script>
 <script type="text/javascript" src="Image.js"></script>
 <script type="text/javascript" src="ImageLoader.js"></script>
 <script type="text/javascript" src="InputHelper.js"></script>
 <script type="text/javascript" src="Line.js"></script>
+<script type="text/javascript" src="Mark.js"></script>
+<script type="text/javascript" src="Orientation.js"></script>
 <script type="text/javascript" src="Scene.js"></script>
 <script type="text/javascript" src="Showing.js"></script>
 
