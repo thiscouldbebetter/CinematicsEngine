@@ -13,6 +13,11 @@ class Showing
 		return this.scene.actorByName(actorName);
 	}
 
+	actorDispositionByName(actorName)
+	{
+		return this.actorDispositions.find(x => x.actorName == actorName);
+	}
+
 	actorRemoveByName(actorName)
 	{
 		var actorDisposition =
@@ -76,8 +81,7 @@ class Showing
 			this.lineIndexCurrent = lineIndexNext;
 			var lineCurrent = this.lineCurrent();
 
-			isAwaitingInput =
-				(lineCurrent.speech != null);
+			isAwaitingInput = lineCurrent.isAwaitingInput();
 			lineCurrent.runForShowing(this);
 		}
 

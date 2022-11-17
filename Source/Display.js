@@ -4,6 +4,8 @@ class Display
 	constructor()
 	{
 		this.fontHeight = 10;
+
+		this._actorPosInView = new Coords();
 	}
 
 	drawShowing(showing)
@@ -25,138 +27,14 @@ class Display
 		var camera = showing.camera;
 		var cameraViewSize = (camera == null ? null : camera.viewSize);
 
-		var actorPosInView = new Coords();
+		this._actorPosInView.clear();
 
 		var actorDispositions = showing.actorDispositions;
 
 		for (var i = 0; i < actorDispositions.length; i++)
 		{
 			var actorDisposition = actorDispositions[i];
-			var actorName = actorDisposition.actorName;
-			var actor = scene.actorsByName.get(actorName);
-			var actorImage = actor.image;
-			var actorImageSizeActual = actorImage.size();
-
-			var actorPos = actorDisposition.pos;
-			actorPosInView.overwriteWith(actorPos);
-			camera.transformCoordsWorldToView(actorPosInView);
-
-			var actorImageSizeApparent =
-				actorImageSizeActual.clone().multiplyScalar
-				(
-					camera.focalLength
-				).divideScalar
-				(
-					actorPosInView.z
-				);
-			var actorImageSizeApparentHalf =
-				actorImageSizeApparent.clone().half();
-
-			this.graphics.drawImage
-			(
-				actorImage.systemImage,
-				// source
-				0, 0,
-				actorImageSizeActual.x,
-				actorImageSizeActual.y,
-				// destination
-				actorPosInView.x - actorImageSizeApparentHalf.x,
-				actorPosInView.y - actorImageSizeApparent.y,
-				actorImageSizeApparent.x,
-				actorImageSizeApparent.y
-			);
-
-			var hasLineCurrent =
-			(
-				lineCurrent.actorName == actorName
-				&& lineCurrent.speech != null
-				&& lineCurrent.speech.length > 0
-			);
-
-			if (hasLineCurrent)
-			{
-				var lineSpeech = lineCurrent.speech;
-
-				var textWidth =
-					this.graphics.measureText(lineSpeech).width;
-				var textAsLines = [ lineSpeech ];
-				var numberOfTextLines = textAsLines.length;
-
-				var speechBubbleMargin = 8;
-				var textMargin = 8;
-				var tailWidthHalf = speechBubbleMargin / 2;
-				var tailLength = speechBubbleMargin;
-
-				var speechBubbleSize = new Coords
-				(
-					textWidth + textMargin * 2,
-					numberOfTextLines * this.fontHeight + textMargin * 2
-				);
-
-				var speechBubblePosX =
-					actorPosInView.x - textWidth / 2 - textMargin;
-
-				if (speechBubblePosX < 0)
-				{
-					speechBubblePosX = speechBubbleMargin;
-				}
-				else if (speechBubblePosX + speechBubbleSize.x > this.viewSize.x)
-				{
-					speechBubblePosX = 
-						this.viewSize.x 
-						- speechBubbleMargin 
-						- textMargin * 2 
-						- textWidth;
-				}
-
-				var speechBubblePos = new Coords(speechBubblePosX, this.fontHeight);
-				var tailPosX = actorPosInView.x;
-				var cornerRadius = textMargin;
-
-				this.graphics.beginPath();
-				this.graphics.moveTo(speechBubblePos.x + cornerRadius, speechBubblePos.y);
-				this.graphics.arcTo
-				(
-					speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y,
-					speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y + cornerRadius,
-					cornerRadius
-				);
-				this.graphics.arcTo
-				(
-					speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y + speechBubbleSize.y,
-					speechBubblePos.x + speechBubbleSize.x - cornerRadius, speechBubblePos.y + speechBubbleSize.y,
-					cornerRadius
-				);
-
-				this.graphics.lineTo(tailPosX + tailWidthHalf, speechBubblePos.y + speechBubbleSize.y);
-				this.graphics.lineTo(tailPosX, speechBubblePos.y + speechBubbleSize.y + tailLength * 2);
-				this.graphics.lineTo(tailPosX - tailWidthHalf, speechBubblePos.y + speechBubbleSize.y);
-
-				this.graphics.arcTo
-				(
-					speechBubblePos.x, speechBubblePos.y + speechBubbleSize.y,
-					speechBubblePos.x, speechBubblePos.y + speechBubbleSize.y - cornerRadius,
-					cornerRadius
-				);
-				this.graphics.arcTo
-				(
-					speechBubblePos.x, speechBubblePos.y,
-					speechBubblePos.x + cornerRadius, speechBubblePos.y,
-					cornerRadius
-				);
-				this.graphics.fillStyle = "White";
-				this.graphics.fill();
-				this.graphics.strokeStyle = "Gray";
-				this.graphics.stroke();
-
-				this.graphics.fillStyle = "Gray";
-				this.graphics.fillText
-				(
-					lineSpeech,
-					speechBubblePos.x + textMargin, 
-					speechBubblePos.y + textMargin + this.fontHeight * .8
-				);
-			}
+			this.drawShowing_ActorDisposition(showing, actorDisposition);
 		}
 
 		var title = showing.title;
@@ -177,6 +55,150 @@ class Display
 				titlePos.x, titlePos.y
 			);
 		}
+	}
+
+	drawShowing_ActorDisposition(showing, actorDisposition)
+	{
+		var scene = showing.scene;
+		var camera = showing.camera;
+
+		var actorName = actorDisposition.actorName;
+		var actor = scene.actorsByName.get(actorName);
+		var actorImage = actor.image;
+		var actorImageSizeActual = actorImage.size();
+
+		var actorPos = actorDisposition.pos;
+		var actorPosInView = this._actorPosInView;
+		actorPosInView.overwriteWith(actorPos);
+		camera.transformCoordsWorldToView(actorPosInView);
+
+		var actorImageSizeApparent =
+			actorImageSizeActual.clone().multiplyScalar
+			(
+				camera.focalLength
+			).divideScalar
+			(
+				actorPosInView.z
+			);
+		var actorImageSizeApparentHalf =
+			actorImageSizeApparent.clone().half();
+
+		this.graphics.drawImage
+		(
+			actorImage.systemImage,
+			// source
+			0, 0,
+			actorImageSizeActual.x,
+			actorImageSizeActual.y,
+			// destination
+			actorPosInView.x - actorImageSizeApparentHalf.x,
+			actorPosInView.y - actorImageSizeApparent.y,
+			actorImageSizeApparent.x,
+			actorImageSizeApparent.y
+		);
+
+		var lineCurrent = showing.lineCurrent();
+		var hasLineCurrent =
+		(
+			lineCurrent.actorName == actorName
+			&& lineCurrent.speech != null
+			&& lineCurrent.speech.length > 0
+		);
+
+		if (hasLineCurrent)
+		{
+			this.drawShowing_ActorDisposition_LineCurrent
+			(
+				lineCurrent, actorPosInView
+			);
+		}
+	}
+
+	drawShowing_ActorDisposition_LineCurrent(lineCurrent, actorPosInView)
+	{
+		var lineSpeech = lineCurrent.speech;
+
+		var g = this.graphics;
+
+		var textWidth =
+			g.measureText(lineSpeech).width;
+		var textAsLines = [ lineSpeech ];
+		var numberOfTextLines = textAsLines.length;
+
+		var speechBubbleMargin = 8;
+		var textMargin = 8;
+		var tailWidthHalf = speechBubbleMargin / 2;
+		var tailLength = speechBubbleMargin;
+
+		var speechBubbleSize = new Coords
+		(
+			textWidth + textMargin * 2,
+			numberOfTextLines * this.fontHeight + textMargin * 2
+		);
+
+		var speechBubblePosX =
+			actorPosInView.x - textWidth / 2 - textMargin;
+
+		if (speechBubblePosX < 0)
+		{
+			speechBubblePosX = speechBubbleMargin;
+		}
+		else if (speechBubblePosX + speechBubbleSize.x > this.viewSize.x)
+		{
+			speechBubblePosX = 
+				this.viewSize.x 
+				- speechBubbleMargin 
+				- textMargin * 2 
+				- textWidth;
+		}
+
+		var speechBubblePos = new Coords(speechBubblePosX, this.fontHeight);
+		var tailPosX = actorPosInView.x;
+		var cornerRadius = textMargin;
+
+		g.beginPath();
+		g.moveTo(speechBubblePos.x + cornerRadius, speechBubblePos.y);
+		g.arcTo
+		(
+			speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y,
+			speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y + cornerRadius,
+			cornerRadius
+		);
+		g.arcTo
+		(
+			speechBubblePos.x + speechBubbleSize.x, speechBubblePos.y + speechBubbleSize.y,
+			speechBubblePos.x + speechBubbleSize.x - cornerRadius, speechBubblePos.y + speechBubbleSize.y,
+			cornerRadius
+		);
+
+		g.lineTo(tailPosX + tailWidthHalf, speechBubblePos.y + speechBubbleSize.y);
+		g.lineTo(tailPosX, speechBubblePos.y + speechBubbleSize.y + tailLength * 2);
+		g.lineTo(tailPosX - tailWidthHalf, speechBubblePos.y + speechBubbleSize.y);
+
+		g.arcTo
+		(
+			speechBubblePos.x, speechBubblePos.y + speechBubbleSize.y,
+			speechBubblePos.x, speechBubblePos.y + speechBubbleSize.y - cornerRadius,
+			cornerRadius
+		);
+		g.arcTo
+		(
+			speechBubblePos.x, speechBubblePos.y,
+			speechBubblePos.x + cornerRadius, speechBubblePos.y,
+			cornerRadius
+		);
+		g.fillStyle = "White";
+		g.fill();
+		g.strokeStyle = "Gray";
+		g.stroke();
+
+		g.fillStyle = "Gray";
+		g.fillText
+		(
+			lineSpeech,
+			speechBubblePos.x + textMargin, 
+			speechBubblePos.y + textMargin + this.fontHeight * .8
+		);
 	}
 
 	initialize(viewSize)

@@ -5,16 +5,26 @@ class Scene
 	(
 		name,
 		fontHeightInPixels,
+		contentFiles,
 		camera,
 		marks,
 		lines
 	)
 	{
 		this.name = name;
+		this.contentFiles = contentFiles;
 		this.fontHeightInPixels = fontHeightInPixels;
 		this.camera = camera;
 		this.marks = marks || [];
 		this.lines = lines;
+
+		this.contentFilesByName = new Map
+		(
+			this.contentFiles.map
+			(
+				x => [ x.name, x ]
+			)
+		);
 
 		this.marksByName = new Map();
 
@@ -22,7 +32,7 @@ class Scene
 		this.actorsByName = new Map();
 	}
 
-	static fromString(sceneAsString)
+	static fromContentFilesAndString(contentFiles, sceneAsString)
 	{
 		var newline = "\n";
 		var sceneAsTextLines = sceneAsString.split(newline);
@@ -41,6 +51,7 @@ class Scene
 		(
 			null, // name
 			null, // fontHeightInPixels 
+			contentFiles,
 			null, // camera
 			null, // marks
 			lines
@@ -99,10 +110,17 @@ class Scene
 				if (doesLineRequireMedia)
 				{
 					var imageName = stageDirectionParts[1];
-					var imageSource = stageDirectionParts[2];
+					var imageSourcePath = stageDirectionParts[2];
+					var imageData =
+					(
+						this.contentFilesByName.has(imageSourcePath)
+						? this.contentFilesByName.get(imageSourcePath).contentsAsDataUrl
+						: imageData = imageSourcePath
+					);
 
-					var image = new Image(imageName, imageSource);
-					imagesToLoad.push(image);
+					var imageToLoad = new Image(imageName, imageData);
+
+					imagesToLoad.push(imageToLoad);
 				}
 			}
 		}

@@ -1,7 +1,17 @@
 
 class Globals
 {
+	constructor()
+	{
+		this.contentFilesUploaded = [];
+	}
+
 	static Instance = new Globals();
+
+	contentFileUploadedAdd(contentFileUploaded)
+	{
+		this.contentFilesUploaded.push(contentFileUploaded);
+	}
 
 	runScene(scene)
 	{

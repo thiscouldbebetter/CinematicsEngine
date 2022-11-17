@@ -62,24 +62,21 @@ class Line
 		return returnLine;
 	}
 
+	isAwaitingInput()
+	{
+		var returnValue =
+		(
+			this.speech != null
+			|| this.stageDirection == LineOperationNames.Instance().Pause
+		);
+		return returnValue;
+	}
+
 	runForShowing(showing)
 	{
 		if (this.stageDirection != null)
 		{
 			var lineTextParts = this.stageDirection.split(" ");
-
-			var opBackground = "Background:";
-			var opCameraMoveTo = "CameraMoveTo:";
-			var opCameraPointAt = "CameraPointAt:";
-			var opCameraViewSize = "CameraViewSize:";
-			var opEnters = "enters";
-			var opExits = "exits";
-			var opFont = "Font:";
-			var opMark = "Mark:";
-			var opMoves = "moves";
-			var opRole = "Role:";
-			var opScene = "Scene:";
-			var opTitle = "Title:";
 
 			var operationName = lineTextParts[0];
 			var operand0 = lineTextParts[1];
@@ -87,7 +84,9 @@ class Line
 			var operand2 = lineTextParts[3];
 			var operand3 = lineTextParts[4];
 
-			if (operationName == opBackground)
+			var opNames = LineOperationNames.Instance();
+
+			if (operationName == opNames.Background)
 			{
 				var backgroundName = operand0;
 				var backgroundImage = showing.scene.imageByName(backgroundName);
@@ -97,7 +96,7 @@ class Line
 				);
 				showing.scene.background = background;
 			}
-			else if (operationName == opCameraMoveTo)
+			else if (operationName == opNames.CameraMoveTo)
 			{
 				var cameraPosX = parseFloat(operand0);
 				var cameraPosY = parseFloat(operand1);
@@ -111,11 +110,11 @@ class Line
 				var camera = showing.camera;
 				camera.pos.overwriteWith(cameraPos);
 			}
-			else if (operationName == opCameraPointAt)
+			else if (operationName == opNames.CameraPointAt)
 			{
 				var camera = showing.camera;
 			}
-			else if (operationName == opCameraViewSize)
+			else if (operationName == opNames.CameraViewSize)
 			{
 				var viewSizeX = parseInt(operand0);
 				var viewSizeY = parseInt(operand1);
@@ -129,7 +128,7 @@ class Line
 				);
 				showing.camera = camera;
 			}
-			else if (operationName == opEnters)
+			else if (operationName == opNames.Enters)
 			{
 				var markName = operand0;
 				var mark = showing.scene.markByName(markName);
@@ -140,16 +139,16 @@ class Line
 				);
 				showing.actorDispositions.push(actorDisposition);
 			}
-			else if (operationName == opExits)
+			else if (operationName == opNames.Exits)
 			{
 				showing.actorRemoveByName(this.actorName);
 			}
-			else if (operationName == opFont)
+			else if (operationName == opNames.Font)
 			{
 				var fontHeight = parseInt(operand0);
 				Globals.Instance.display.fontHeight = fontHeight;
 			}
-			else if (operationName == opMark)
+			else if (operationName == opNames.Mark)
 			{
 				var markName = operand0;
 				var markPosX = parseFloat(operand1);
@@ -162,36 +161,41 @@ class Line
 				var mark = new Mark(markName, markPos);
 				showing.scene.markAdd(mark);
 			}
-			else if (operationName == opMoves)
+			else if (operationName == opNames.Moves)
 			{
 				var markName = operand0;
 				var mark = showing.scene.markByName(markName);
 				var markPos = mark.pos;
 				var actorDisposition =
-					showing.actorDispositions.find
-					(
-						x => x.actorName == this.actorName
-					);
+					showing.actorDispositionByName(this.actorName);
 				actorDisposition.pos.overwriteWith(markPos);
 			}
-			else if (operationName == opRole)
+			else if (operationName == opNames.Pause)
+			{
+				// Do nothing.
+			}
+			else if (operationName == opNames.Role)
 			{
 				var actorName = operand0;
 				var actorImage = showing.scene.imageByName(actorName);
 				var actor = new Actor(actorName, actorImage);
 				showing.scene.actorAdd(actor);
 			}
-			else if (operationName == opScene)
+			else if (operationName == opNames.Scene)
 			{
 				var sceneName =
-					this.stageDirection.substring(opScene.length + 1);
+					this.stageDirection.substring(opNames.Scene.length + 1);
 				showing.scene.name = sceneName;
 			}
-			else if (operationName == opTitle)
+			else if (operationName == opNames.Title)
 			{
 				var titleToSet =
 					(operand0.length == 0 ? null : lineTextParts.slice(1).join(" "));
 				showing.title = titleToSet;
+			}
+			else if (operationName == opNames.TitleClear)
+			{
+				showing.title = "";
 			}
 		}
 	}

@@ -12,9 +12,17 @@
 		to see it played out in visual form.
 	</p>
 
-	<label>Scene as Text:</label>
-	<br />
-	<textarea id="textareaScene" cols="80" rows="16">
+	<div>
+		<label>Content Files Uploaded:</label>
+		<input type="file" multiple="multiple" onchange="inputContentFileToUpload_Changed(this);"></input>
+		<br />
+		<select id="selectContentFilesUploaded"></select>
+	</div>
+
+	<div>
+		<label>Scene as Text:</label>
+		<br />
+		<textarea id="textareaScene" cols="80" rows="16">
 
 [CameraViewSize: 200 150 100]
 [CameraMoveTo: 0 -100 25]
@@ -34,6 +42,10 @@
 [Role: Rick ../Content/Demo/Rick.png]
 [Role: Jane ../Content/Demo/Jane.png]
 [Role: Spot ../Content/Demo/Spot.png]
+
+[Title: "We Need to Talk About Spot"]
+[Pause]
+[TitleClear]
 
 Rick: [enters left]
 Jane: [enters right]
@@ -65,11 +77,12 @@ Spot: [exits]
 [Title: THE END]
 
 
-	</textarea>
-	<br />
+		</textarea>
+	</div>
 
-	<button onclick="buttonRun_Clicked();">Run</button>
-	<br />
+	<div>
+		<button onclick="buttonRun_Clicked();">Run</button>
+	</div>
 
 	<div>
 		<label>Output:</label>
@@ -83,6 +96,7 @@ Spot: [exits]
 <script type="text/javascript" src="ActorDisposition.js"></script>
 <script type="text/javascript" src="Background.js"></script>
 <script type="text/javascript" src="Camera.js"></script>
+<script type="text/javascript" src="ContentFile.js"></script>
 <script type="text/javascript" src="Coords.js"></script>
 <script type="text/javascript" src="Display.js"></script>
 <script type="text/javascript" src="Globals.js"></script>
@@ -90,6 +104,7 @@ Spot: [exits]
 <script type="text/javascript" src="ImageLoader.js"></script>
 <script type="text/javascript" src="InputHelper.js"></script>
 <script type="text/javascript" src="Line.js"></script>
+<script type="text/javascript" src="LineOperationNames.js"></script>
 <script type="text/javascript" src="Mark.js"></script>
 <script type="text/javascript" src="Orientation.js"></script>
 <script type="text/javascript" src="Scene.js"></script>
@@ -105,8 +120,9 @@ function buttonRun_Clicked()
 	var textareaScene = d.getElementById("textareaScene");
 	var sceneAsString = textareaScene.value;
 
-	var scene = Scene.fromString
+	var scene = Scene.fromContentFilesAndString
 	(
+		Globals.Instance.contentFilesUploaded,
 		sceneAsString
 	);
 
@@ -116,8 +132,46 @@ function buttonRun_Clicked()
 	);
 }
 
+function inputContentFileToUpload_Changed(inputContentFile)
+{
+	var filesToUpload = inputContentFile.files;
+	if (filesToUpload.length > 0)
+	{
+		for (var i = 0; i < filesToUpload.length; i++)
+		{
+			var fileToUpload = filesToUpload[i];
+			var fileReader = new FileReader();
+			fileReader.fileName = fileToUpload.name;
+			fileReader.onload = (event) =>
+			{
+				var fileReader = event.target;
+				var fileContentsAsDataUrl = fileReader.result;
+
+				var contentFile = ContentFile.fromNameAndContentsAsDataUrl
+				(
+					fileReader.fileName,
+					fileContentsAsDataUrl
+				);
+
+				Globals.Instance.contentFileUploadedAdd(contentFile);
+
+				var d = document;
+				var selectContentFilesUploaded =
+					d.getElementById("selectContentFilesUploaded");
+				var contentFileUploadedAsOption =
+					contentFile.toDomElementOption();
+				selectContentFilesUploaded.appendChild
+				(
+					contentFileUploadedAsOption
+				);
+			};
+
+			fileReader.readAsDataURL(fileToUpload);
+		}
+	}
+}
+
 </script>
 
 </body>
 </html>
-    
