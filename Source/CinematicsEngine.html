@@ -28,6 +28,8 @@
 [CameraMoveTo: 0 -100 25]
 [CameraPointAt: 0 0 0]
 [Font: 10]
+[Advance: EveryNTicks 50]
+[TicksPerSecond: 25]
 
 [Scene: We Need to Talk About Spot]
 ===================================
@@ -39,8 +41,8 @@
 [Mark: right_downstage -50 30 0]
 [Mark: right_upstage -50 -30 0]
 
-[Role: Rick ../Content/Demo/Rick.png]
-[Role: Jane ../Content/Demo/Jane.png]
+[Role: Rick ../Content/Demo/Rick/Neutral.png]
+[Role: Jane ../Content/Demo/Jane/Neutral.png]
 [Role: Spot ../Content/Demo/Spot.png]
 
 [Title: "We Need to Talk About Spot"]
@@ -54,16 +56,16 @@ Jane: His NAME is Mr. Beansprouts.
 Rick: For the hundredth time, no it's NOT.
 Jane: Yes, it is.  I'll prove it.
 Jane: Come here, Mr. Beansprouts!
-Rick: ...
+[Pause]
 Jane: [moves right_downstage] Mr. Beeeeeeansprouts!
-Rick: ...
+[Pause]
 [Font: 12]
 Jane: [moves right_upstage] RIGHT NOW, MR. BEANSPROUTS!
 [Font: 10]
-Rick: ...
+[Pause]
 Jane: [moves right] Stupid dog.  Forget it.
 Jane: [exits]
-Rick: ...
+[Pause]
 Spot: [enters right]
 Spot: Is she gone?
 Spot: I've told her a million times...
@@ -75,7 +77,7 @@ Rick: [exits]
 Spot: [exits]
 
 [Title: THE END]
-
+[End]
 
 		</textarea>
 	</div>
@@ -94,6 +96,7 @@ Spot: [exits]
 
 <script type="text/javascript" src="Actor.js"></script>
 <script type="text/javascript" src="ActorDisposition.js"></script>
+<script type="text/javascript" src="Advancer.js"></script>
 <script type="text/javascript" src="Background.js"></script>
 <script type="text/javascript" src="Camera.js"></script>
 <script type="text/javascript" src="ContentFile.js"></script>

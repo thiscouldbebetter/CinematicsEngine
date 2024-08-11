@@ -86,7 +86,15 @@ class Line
 
 			var opNames = LineOperationNames.Instance();
 
-			if (operationName == opNames.Background)
+			if (operationName == opNames.Advance)
+			{
+				var advancerTypeName = operand0;
+				var advancerArgument = operand1;
+				var advancer =
+					Advancer.fromTypeNameAndArgument(advancerTypeName, advancerArgument);
+				showing.scene.advancer = advancer;
+			}
+			else if (operationName == opNames.Background)
 			{
 				var backgroundName = operand0;
 				var backgroundImage = showing.scene.imageByName(backgroundName);
@@ -127,6 +135,10 @@ class Line
 					viewSize, focalLength, null, null
 				);
 				showing.camera = camera;
+			}
+			else if (operationName == opNames.End)
+			{
+				showing.stop();
 			}
 			else if (operationName == opNames.Enters)
 			{
@@ -186,6 +198,11 @@ class Line
 				var sceneName =
 					this.stageDirection.substring(opNames.Scene.length + 1);
 				showing.scene.name = sceneName;
+			}
+			else if (operationName == opNames.TicksPerSecond)
+			{
+				var ticksPerSecond = parseInt(operand0);
+				showing.ticksPerSecondSet(ticksPerSecond);
 			}
 			else if (operationName == opNames.Title)
 			{

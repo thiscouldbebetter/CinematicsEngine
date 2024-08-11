@@ -25,20 +25,8 @@ class Globals
 		this.showing = new Showing(scene);
 		this.showing.initialize();
 
-		var millisecondsPerTimerTick = 100;
-		setInterval
-		(
-			this.handleEventTimerTick.bind(this), 
-			millisecondsPerTimerTick
-		);
+		this.showing.ticksPerSecondSet(scene.ticksPerSecond);
 
 		this.inputHelper.initialize();
-	}
-
-	// events
-
-	handleEventTimerTick()
-	{
-		this.showing.updateForTimerTick();
 	}
 }

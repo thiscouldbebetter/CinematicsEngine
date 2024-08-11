@@ -3,10 +3,12 @@ class LineOperationNames
 {
 	constructor()
 	{
+		this.Advance = "Advance:";
 		this.Background = "Background:";
 		this.CameraMoveTo = "CameraMoveTo:";
 		this.CameraPointAt = "CameraPointAt:";
 		this.CameraViewSize = "CameraViewSize:";
+		this.End = "End";
 		this.Enters = "enters";
 		this.Exits = "exits";
 		this.Font = "Font:";
@@ -15,6 +17,7 @@ class LineOperationNames
 		this.Pause = "Pause";
 		this.Role = "Role:";
 		this.Scene = "Scene:";
+		this.TicksPerSecond = "TicksPerSecond:";
 		this.Title = "Title:";
 		this.TitleClear = "TitleClear";
 	}

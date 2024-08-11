@@ -85,18 +85,47 @@ class Showing
 			lineCurrent.runForShowing(this);
 		}
 
+		// todo - Is this necessary?
 		Globals.Instance.display.drawShowing(this);
+	}
+
+	lineCurrentAdvanceAndDraw()
+	{
+		// todo
+		// Isn't it already drawing at the end of .lineCurrentAdvance()?
+
+		this.lineCurrentAdvance();
+		this.draw();
+	}
+
+	stop()
+	{
+		if (this.timer != null)
+		{
+			clearInterval(this.timer);
+		}
+	}
+
+	ticksPerSecondSet(value)
+	{
+		if (this.timer != null)
+		{
+			clearInterval(this.timer);
+		}
+
+		var millisecondsPerTimerTick =
+			Math.round(1000 / value);
+
+		this.timer = setInterval
+		(
+			this.updateForTimerTick.bind(this), 
+			millisecondsPerTimerTick
+		);
 	}
 
 	updateForTimerTick()
 	{
-		var inputHelper = Globals.Instance.inputHelper;
-
-		if (inputHelper.isMousePressed)
-		{
-			inputHelper.isMousePressed = false;
-			this.lineCurrentAdvance();
-			this.draw();
-		}
+		var advancer = this.scene.advancer;
+		advancer.updateShowingForTimerTick(this);
 	}
 }

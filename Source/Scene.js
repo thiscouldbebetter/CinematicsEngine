@@ -4,6 +4,8 @@ class Scene
 	constructor
 	(
 		name,
+		ticksPerSecond,
+		advancer,
 		fontHeightInPixels,
 		contentFiles,
 		camera,
@@ -12,6 +14,8 @@ class Scene
 	)
 	{
 		this.name = name;
+		this.ticksPerSecond = ticksPerSecond || 10;
+		this.advancer = advancer || Advancer.onClick();
 		this.contentFiles = contentFiles;
 		this.fontHeightInPixels = fontHeightInPixels;
 		this.camera = camera;
@@ -32,6 +36,21 @@ class Scene
 		this.actorsByName = new Map();
 	}
 
+	static fromContentFilesAndLines(contentFiles, lines)
+	{
+		return new Scene
+		(
+			null, // name,
+			null, // ticksPerSecond
+			null, // advancer,
+			null, // fontHeightInPixels,
+			contentFiles,
+			null, // camera,
+			null, // marks,
+			lines
+		);
+	}
+
 	static fromContentFilesAndString(contentFiles, sceneAsString)
 	{
 		var newline = "\n";
@@ -47,13 +66,9 @@ class Scene
 		);
 
 		// Null fields will be set by stage directions in the lines array.
-		var returnScene = new Scene
+		var returnScene = Scene.fromContentFilesAndLines
 		(
-			null, // name
-			null, // fontHeightInPixels 
 			contentFiles,
-			null, // camera
-			null, // marks
 			lines
 		);
 
