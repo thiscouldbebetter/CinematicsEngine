@@ -13,73 +13,30 @@
 	</p>
 
 	<div>
-		<label>Content Files Uploaded:</label>
-		<input type="file" multiple="multiple" onchange="inputContentFileToUpload_Changed(this);"></input>
-		<br />
-		<select id="selectContentFilesUploaded"></select>
+		<div>
+			<label>Content File to Convert to DataURL:</label>
+			<input
+				type="file"
+				multiple="multiple"
+				onchange="inputContentFileToUpload_Changed(this);"
+			></input>
+		</div>
+		<div>
+			<label>File as DataURL:</label>
+			<input id="inputContentFileAsDataUrl"></input>
+		</div>
 	</div>
 
 	<div>
 		<label>Scene as Text:</label>
+		<button onclick="buttonSceneAsTextClear_Clicked()">Clear</button>
+		<button onclick="buttonSceneAsTextDemo_Clicked()">Demo</button>
 		<br />
-		<textarea id="textareaScene" cols="80" rows="16">
-
-[CameraViewSize: 200 150 100]
-[CameraMoveTo: 0 -100 25]
-[CameraPointAt: 0 0 0]
-[Font: 10]
-[Advance: EveryNTicks 50]
-[TicksPerSecond: 25]
-
-[Scene: We Need to Talk About Spot]
-===================================
-
-[Background: Suburbia ../Content/Demo/Suburbia.png]
-
-[Mark: left 50 0 0]
-[Mark: right -50 0 0]
-[Mark: right_downstage -50 30 0]
-[Mark: right_upstage -50 -30 0]
-
-[Role: Rick ../Content/Demo/Rick/Neutral.png]
-[Role: Jane ../Content/Demo/Jane/Neutral.png]
-[Role: Spot ../Content/Demo/Spot.png]
-
-[Title: "We Need to Talk About Spot"]
-[Pause]
-[TitleClear]
-
-Rick: [enters left]
-Jane: [enters right]
-Rick: Jane, have you seen Spot?
-Jane: His NAME is Mr. Beansprouts.
-Rick: For the hundredth time, no it's NOT.
-Jane: Yes, it is.  I'll prove it.
-Jane: Come here, Mr. Beansprouts!
-[Pause]
-Jane: [moves right_downstage] Mr. Beeeeeeansprouts!
-[Pause]
-[Font: 12]
-Jane: [moves right_upstage] RIGHT NOW, MR. BEANSPROUTS!
-[Font: 10]
-[Pause]
-Jane: [moves right] Stupid dog.  Forget it.
-Jane: [exits]
-[Pause]
-Spot: [enters right]
-Spot: Is she gone?
-Spot: I've told her a million times...
-Spot: ...it's DOCTOR Beansprouts.
-Spot: Anyway, you wanted to see me?
-Rick: Shut up and get in the crate, Spot.
-Spot: Yes, sir.
-Rick: [exits]
-Spot: [exits]
-
-[Title: THE END]
-[End]
-
-		</textarea>
+		<textarea
+			id="textareaScene"
+			cols="80" rows="16"
+			spellcheck="false"
+		></textarea>
 	</div>
 
 	<div>
@@ -97,11 +54,12 @@ Spot: [exits]
 <script type="text/javascript" src="Actor.js"></script>
 <script type="text/javascript" src="ActorDisposition.js"></script>
 <script type="text/javascript" src="Advancer.js"></script>
+<script type="text/javascript" src="Animation.js"></script>
 <script type="text/javascript" src="Background.js"></script>
 <script type="text/javascript" src="Camera.js"></script>
-<script type="text/javascript" src="ContentFile.js"></script>
 <script type="text/javascript" src="Coords.js"></script>
 <script type="text/javascript" src="Display.js"></script>
+<script type="text/javascript" src="Font.js"></script>
 <script type="text/javascript" src="Globals.js"></script>
 <script type="text/javascript" src="Image.js"></script>
 <script type="text/javascript" src="ImageLoader.js"></script>
@@ -135,6 +93,79 @@ function buttonRun_Clicked()
 	);
 }
 
+function buttonSceneAsTextClear_Clicked()
+{
+	var d = document;
+	var textareaScene = d.getElementById("textareaScene");
+	textareaScene.value = "";
+}
+
+function buttonSceneAsTextDemo_Clicked()
+{
+	var d = document;
+	var textareaScene = d.getElementById("textareaScene");
+	var sceneAsLines =
+	[
+		"[CameraViewSize: 200 150 100]",
+		"[CameraMoveTo: 0 -100 25]",
+		"[CameraPointAt: 0 0 0]",
+		"[Font: 10]",
+		"[Advance: EveryNTicks 50]",
+		"[TicksPerSecond: 25]",
+		"",
+		"[Scene: We Need to Talk About Spot]",
+		"===================================",
+		"",
+		"[Background: Suburbia ../Content/Demo/Suburbia.png]",
+		"",
+		"[Mark: left 50 0 0]",
+		"[Mark: right -50 0 0]",
+		"[Mark: right_downstage -50 30 0]",
+		"[Mark: right_upstage -50 -30 0]",
+		"",
+		"[Role: Rick ../Content/Demo/Rick/Neutral.png]",
+		"[Role: Jane ../Content/Demo/Jane/Neutral.png]",
+		"[Role: Spot ../Content/Demo/Spot.png]",
+		"",
+		"[Title: \"We Need to Talk About Spot\"]",
+		"[Pause]",
+		"[TitleClear]",
+		"",
+		"Rick: [enters left]",
+		"Jane: [enters right]",
+		"Rick: Jane, have you seen Spot?",
+		"Jane: His NAME is Mr. Beansprouts.",
+		"Rick: For the hundredth time, no it's NOT.",
+		"Jane: Yes, it is.  I'll prove it.",
+		"Jane: Come here, Mr. Beansprouts!",
+		"[Pause]",
+		"Jane: [moves right_downstage] Mr. Beeeeeeansprouts!",
+		"[Pause]",
+		"[Font: 12]",
+		"Jane: [moves right_upstage] RIGHT NOW, MR. BEANSPROUTS!",
+		"[Font: 10]",
+		"[Pause]",
+		"Jane: [moves right] Stupid dog.  Forget it.",
+		"Jane: [exits]",
+		"[Pause]",
+		"Spot: [enters right]",
+		"Spot: Is she gone?",
+		"Spot: I've told her a million times...",
+		"Spot: ...it's DOCTOR Beansprouts.",
+		"Spot: Anyway, you wanted to see me?",
+		"Rick: Shut up and get in the crate, Spot.",
+		"Spot: Yes, sir.",
+		"Rick: [exits]",
+		"Spot: [exits]",
+		"",
+		"[Title: THE END]",
+		"[End]"
+	];
+	var newline = "\n";
+	var sceneAsString = sceneAsLines.join(newline);
+	textareaScene.value = sceneAsString;
+}
+
 function inputContentFileToUpload_Changed(inputContentFile)
 {
 	var filesToUpload = inputContentFile.files;
@@ -150,25 +181,11 @@ function inputContentFileToUpload_Changed(inputContentFile)
 				var fileReader = event.target;
 				var fileContentsAsDataUrl = fileReader.result;
 
-				var contentFile = ContentFile.fromNameAndContentsAsDataUrl
-				(
-					fileReader.fileName,
-					fileContentsAsDataUrl
-				);
-
-				Globals.Instance.contentFileUploadedAdd(contentFile);
-
 				var d = document;
-				var selectContentFilesUploaded =
-					d.getElementById("selectContentFilesUploaded");
-				var contentFileUploadedAsOption =
-					contentFile.toDomElementOption();
-				selectContentFilesUploaded.appendChild
-				(
-					contentFileUploadedAsOption
-				);
+				var inputContentFileAsDataUrl =
+					d.getElementById("inputContentFileAsDataUrl");
+				inputContentFileAsDataUrl.value = fileContentsAsDataUrl;
 			};
-
 			fileReader.readAsDataURL(fileToUpload);
 		}
 	}

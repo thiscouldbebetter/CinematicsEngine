@@ -16,6 +16,13 @@ class Coords
 		return this;
 	}
 
+	addXY(x, y)
+	{
+		this.x += x;
+		this.y += y;
+		return this;
+	}
+
 	clear()
 	{
 		this.x = 0;

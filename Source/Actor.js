@@ -1,9 +1,14 @@
 
 class Actor
 {
-	constructor(name, image)
+	constructor(name, animationGroup)
 	{
 		this.name = name;
-		this.image = image;
+		this.animationGroup = animationGroup;
+	}
+
+	imageCurrent()
+	{
+		return this.animationGroup.imageCurrent();
 	}
 }

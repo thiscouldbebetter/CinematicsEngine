@@ -91,18 +91,23 @@ class Line
 				var advancerTypeName = operand0;
 				var advancerArgument = operand1;
 				var advancer =
-					Advancer.fromTypeNameAndArgument(advancerTypeName, advancerArgument);
+					Advancer.fromTypeNameAndArgument
+					(
+						advancerTypeName, advancerArgument
+					);
 				showing.scene.advancer = advancer;
 			}
 			else if (operationName == opNames.Background)
 			{
 				var backgroundName = operand0;
-				var backgroundImage = showing.scene.imageByName(backgroundName);
+				var scene = showing.scene;
+				var backgroundImage =
+					scene.imageByName(backgroundName);
 				var background = new Background
 				(
 					backgroundName, backgroundImage
 				);
-				showing.scene.background = background;
+				scene.background = background;
 			}
 			else if (operationName == opNames.CameraMoveTo)
 			{
@@ -158,7 +163,9 @@ class Line
 			else if (operationName == opNames.Font)
 			{
 				var fontHeight = parseInt(operand0);
-				Globals.Instance.display.fontHeight = fontHeight;
+				var fontName = operand1;
+				var display = Globals.Instance.display;
+				display.fontSetFromNameAndHeightInPixels(fontName, fontHeight);
 			}
 			else if (operationName == opNames.Mark)
 			{
@@ -190,7 +197,8 @@ class Line
 			{
 				var actorName = operand0;
 				var actorImage = showing.scene.imageByName(actorName);
-				var actor = new Actor(actorName, actorImage);
+				var actorAnimationGroup = AnimationGroup.fromImage(actorImage);
+				var actor = new Actor(actorName, actorAnimationGroup);
 				showing.scene.actorAdd(actor);
 			}
 			else if (operationName == opNames.Scene)

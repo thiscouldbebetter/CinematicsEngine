@@ -3,7 +3,7 @@ class Display
 {
 	constructor()
 	{
-		this.fontHeight = 10;
+		this.font = Font.default();
 
 		this._actorPosInView = new Coords();
 	}
@@ -48,12 +48,8 @@ class Display
 				cameraViewSize.x / 2 - textWidth / 2,
 				cameraViewSize.y / 2
 			);
-			this.graphics.fillStyle = "Gray";
-			this.graphics.fillText
-			(
-				title,
-				titlePos.x, titlePos.y
-			);
+
+			this.drawTextAtPos(title, titlePos);
 		}
 	}
 
@@ -64,7 +60,7 @@ class Display
 
 		var actorName = actorDisposition.actorName;
 		var actor = scene.actorsByName.get(actorName);
-		var actorImage = actor.image;
+		var actorImage = actor.imageCurrent();
 		var actorImageSizeActual = actorImage.size();
 
 		var actorPos = actorDisposition.pos;
@@ -130,10 +126,12 @@ class Display
 		var tailWidthHalf = speechBubbleMargin / 2;
 		var tailLength = speechBubbleMargin;
 
+		var fontHeight = this.font.heightInPixels;
+
 		var speechBubbleSize = new Coords
 		(
 			textWidth + textMargin * 2,
-			numberOfTextLines * this.fontHeight + textMargin * 2
+			numberOfTextLines * fontHeight + textMargin * 2
 		);
 
 		var speechBubblePosX =
@@ -152,7 +150,7 @@ class Display
 				- textWidth;
 		}
 
-		var speechBubblePos = new Coords(speechBubblePosX, this.fontHeight);
+		var speechBubblePos = new Coords(speechBubblePosX, fontHeight);
 		var tailPosX = actorPosInView.x;
 		var cornerRadius = textMargin;
 
@@ -192,13 +190,36 @@ class Display
 		g.strokeStyle = "Gray";
 		g.stroke();
 
+		var textPos =
+			speechBubblePos
+				.clone()
+				.addXY(textMargin, textMargin + fontHeight * .8);
+
+		this.drawTextAtPos(lineSpeech, textPos);
+	}
+
+	drawTextAtPos(textToDraw, drawPos)
+	{
+		var g = this.graphics;
 		g.fillStyle = "Gray";
 		g.fillText
 		(
-			lineSpeech,
-			speechBubblePos.x + textMargin, 
-			speechBubblePos.y + textMargin + this.fontHeight * .8
+			textToDraw,
+			drawPos.x, drawPos.y
 		);
+	}
+
+	fontSetFromNameAndHeightInPixels(name, heightInPixels)
+	{
+		if (name != null)
+		{
+			this.font.name = name;
+		}
+
+		if (heightInPixels != null)
+		{
+			this.font.heightInPixels = heightInPixels;
+		}
 	}
 
 	initialize(viewSize)
@@ -212,7 +233,7 @@ class Display
 		divOutput.innerHTML = "";
 		divOutput.appendChild(canvas);
 		this.graphics = canvas.getContext("2d");
-		this.graphics.font = "" + this.fontHeight + "px sans-serif";
+		this.graphics.font = "" + this.font.toSystemFont();
 
 		this.fillStyle = "LightGray";
 	}
