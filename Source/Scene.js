@@ -7,7 +7,6 @@ class Scene
 		ticksPerSecond,
 		advancer,
 		fontHeightInPixels,
-		contentFiles,
 		camera,
 		marks,
 		lines
@@ -16,19 +15,10 @@ class Scene
 		this.name = name;
 		this.ticksPerSecond = ticksPerSecond || 10;
 		this.advancer = advancer || Advancer.onClick();
-		this.contentFiles = contentFiles;
 		this.fontHeightInPixels = fontHeightInPixels;
 		this.camera = camera;
 		this.marks = marks || [];
 		this.lines = lines;
-
-		this.contentFilesByName = new Map
-		(
-			this.contentFiles.map
-			(
-				x => [ x.name, x ]
-			)
-		);
 
 		this.marksByName = new Map();
 
@@ -36,7 +26,7 @@ class Scene
 		this.actorsByName = new Map();
 	}
 
-	static fromContentFilesAndLines(contentFiles, lines)
+	static fromLines(lines)
 	{
 		return new Scene
 		(
@@ -44,14 +34,13 @@ class Scene
 			null, // ticksPerSecond
 			null, // advancer,
 			null, // fontHeightInPixels,
-			contentFiles,
 			null, // camera,
 			null, // marks,
 			lines
 		);
 	}
 
-	static fromContentFilesAndString(contentFiles, sceneAsString)
+	static fromString(sceneAsString)
 	{
 		var newline = "\n";
 		var sceneAsTextLines = sceneAsString.split(newline);
@@ -66,11 +55,7 @@ class Scene
 		);
 
 		// Null fields will be set by stage directions in the lines array.
-		var returnScene = Scene.fromContentFilesAndLines
-		(
-			contentFiles,
-			lines
-		);
+		var returnScene = Scene.fromLines(lines);
 
 		return returnScene;
 	}
@@ -126,12 +111,7 @@ class Scene
 				{
 					var imageName = stageDirectionParts[1];
 					var imageSourcePath = stageDirectionParts[2];
-					var imageData =
-					(
-						this.contentFilesByName.has(imageSourcePath)
-						? this.contentFilesByName.get(imageSourcePath).contentsAsDataUrl
-						: imageData = imageSourcePath
-					);
+					var imageData = imageSourcePath;
 
 					var imageToLoad = new Image(imageName, imageData);
 
