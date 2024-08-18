@@ -6,7 +6,7 @@ class Scene
 		name,
 		ticksPerSecond,
 		advancer,
-		fontHeightInPixels,
+		font,
 		camera,
 		marks,
 		lines
@@ -15,7 +15,7 @@ class Scene
 		this.name = name;
 		this.ticksPerSecond = ticksPerSecond || 10;
 		this.advancer = advancer || Advancer.onClick();
-		this.fontHeightInPixels = fontHeightInPixels;
+		this.font = font || Font.default();
 		this.camera = camera;
 		this.marks = marks || [];
 		this.lines = lines;
@@ -47,7 +47,10 @@ class Scene
 			"[Mark: right_downstage -50 30 0]",
 			"[Mark: right_upstage -50 -30 0]",
 			"",
+			/*
 			"[Role: Rick data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAF4SURBVHhe7ZhBboUwDEShV+i2y97/RF122zPQuhpUKw39cWynQuMnoUEf9GcYQgTZP15ej42YJygtVQCUlioASksVAKWlCoDSUgVAaQn7Fnh+f8PeD1//jb0YMjzcBfRCtXhDZnpMFzASqsUacoXH1BzQC3Ycx6+txXJBKzyEkEmwF0S4+n2GLA9zAW3DjwLIcX3OyB1a4XHiGgGPgkWQ7WEqQDdrDTZ6h1Z4aELmgCv2ff/eMvF6pBWgQ2WVEOGROgLuQFoB+nm0PsujRHiYCtBvWSNDTkKdwfT5f72trfDQuEbA7HNnIdvDXID1XVuwXsQKjxP3HCDGV+a9Y7MXl+UxVUDP4AyitxZLsBUewpL1AMEaTJPpUStCUQXcFfckeHeqACgtVQCUlioASksVAKWlCoDSQl9AyMfQ6OdqFp4vQvcI+O+LFzwZag6A0uIuIHrVZwZPhloRgtJSBUBpqQKgtFQBUFqqACgtVQCUlioASgt5Adv2CXk2xQQ6lAUqAAAAAElFTkSuQmCC]",
+			*/
+			"[Role: Rick ../Content/Demo/Rick/RightToLeft.png 2x1]",
 			"",
 			"[Role: Jane data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAF5SURBVHhe7ZkLjoMwEEOhp9jT7eF6ut6CLSu3CoHSTDIzamU/CRmVCg/OhyjM0/W2TMRcoLQoACgtCgBKiwKA0qIAoLTQB+CzFP79wUnB9YYTJ4I8xgI4KqpmtMhgj74AWoqqsRaZ4XHHPgccFLYsy+7YYXmgDA8wPAkeFnLn1e89RHrYAigSXs3fFbC73tJCGR4F4a/Bdw/gwYhHewBVy1jY/P+shTI8KoZ6wDzP/0ck0R7dAZRFRRWY4RE+B3w63QGUY846XlvJ8GgPoFhlPbrjWlRLYZvue7Zay/CoCB8CUWO3ZMTDZRJsxrhWz/CwBVDdfC3wVZFn107J8Ciw94CDhB+FlMcOS8tkeID+/YDW1VZHUU8SPLQj5BLAFxP+Gvx0FACUFgUApUUBQGlRAFBaFACUFgUApUUBQGmhDyBmQ8TwcdKM806Tfw+IfPgV5/trDoDS4h+A925wjfP9tSsMpUUBQGlRAFBaFACUFgUApUUBQEmZpj/AmK9JWkteywAAAABJRU5ErkJggg==]",
 			"",
@@ -100,7 +103,7 @@ class Scene
 			null, // name,
 			null, // ticksPerSecond
 			null, // advancer,
-			null, // fontHeightInPixels,
+			null, // font,
 			null, // camera,
 			null, // marks,
 			lines

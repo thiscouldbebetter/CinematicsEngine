@@ -8,6 +8,16 @@ class Coords
 		this.z = z;
 	}
 
+	static ones()
+	{
+		return new Coords(1, 1, 1);
+	}
+
+	static zeroes()
+	{
+		return new Coords(0, 0, 0);
+	}
+
 	add(other)
 	{
 		this.x += other.x;
@@ -118,5 +128,23 @@ class Coords
 		this.y -= other.y;
 		this.z -= other.z;
 		return this;
+	}
+
+	// String.
+
+	static fromString(coordsAsString)
+	{
+		coordsAsString = coordsAsString || "1x1x1";
+
+		var xyz =
+			coordsAsString
+				.split("x")
+				.map(x => parseFloat(x) );
+		return new Coords(xyz[0], xyz[1], xyz[2]);
+	}
+
+	toString()
+	{
+		return this.x + "x" + this.y;
 	}
 }

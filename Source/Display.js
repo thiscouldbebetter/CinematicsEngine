@@ -12,14 +12,12 @@ class Display
 	{
 		var scene = showing.scene;
 
+		var g = this.graphics;
+
 		if (scene.background != null)
 		{
-			var backgroundImage = scene.background.image.systemImage;
-			this.graphics.drawImage
-			(
-				backgroundImage,
-				0, 0
-			);
+			var backgroundImage = scene.background.image;
+			backgroundImage.drawToGraphicsAtPos(g, Coords.zeroes() );
 		}
 
 		var lineCurrent = showing.lineCurrent();
@@ -41,7 +39,7 @@ class Display
 		if (title != null)
 		{
 			var textWidth =
-				this.graphics.measureText(title).width;
+				g.measureText(title).width;
 
 			var titlePos = new Coords
 			(
@@ -79,19 +77,18 @@ class Display
 		var actorImageSizeApparentHalf =
 			actorImageSizeApparent.clone().half();
 
-		this.graphics.drawImage
+		var g = this.graphics;
+
+		actorImage.drawToGraphicsAtPosWithSize
 		(
-			actorImage.systemImage,
-			// source
-			0, 0,
-			actorImageSizeActual.x,
-			actorImageSizeActual.y,
-			// destination
-			actorPosInView.x - actorImageSizeApparentHalf.x,
-			actorPosInView.y - actorImageSizeApparent.y,
-			actorImageSizeApparent.x,
-			actorImageSizeApparent.y
-		);
+			g,
+			new Coords // pos
+			(
+				actorPosInView.x - actorImageSizeApparentHalf.x,
+				actorPosInView.y - actorImageSizeApparent.y // !
+			),
+			actorImageSizeApparent
+		)
 
 		var lineCurrent = showing.lineCurrent();
 		var hasLineCurrent =

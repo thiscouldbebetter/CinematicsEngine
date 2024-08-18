@@ -1,16 +1,49 @@
 
 class Animation
 {
-	constructor(name, imageBase, sequences)
+	constructor(name, imageBaseSizeInFrames, imageBase, sequences)
 	{
 		this.name = name;
+		this.imageBaseSizeInFrames =
+			imageBaseSizeInFrames || Coords.ones();
 		this.imageBase = imageBase;
-		this.sequences = sequences || [ AnimationSequence.default() ];
+		this.sequences =
+			sequences || [ AnimationSequence.default() ];
 	}
 
 	static fromImageBase(imageBase)
 	{
-		return new Animation(imageBase.name, imageBase, null);
+		return new Animation
+		(
+			imageBase.name,
+			null, // imageBaseSizeInFrames
+			imageBase,
+			null // sequences
+		);
+	}
+
+	static fromImageBaseAndSizeInFrames
+	(
+		imageBase, imageBaseSizeInFrames
+	)
+	{
+		return new Animation
+		(
+			imageBase.name,
+			imageBaseSizeInFrames,
+			imageBase,
+			null // sequences
+		);
+	}
+
+	frameSizeInPixels()
+	{
+		var returnValue =
+			this.imageBase
+				.size()
+				.divide(this.imageBaseSizeInFrames);
+
+		return returnValue;
 	}
 
 	imageCurrent()
@@ -44,6 +77,18 @@ class AnimationGroup
 		);
 	}
 
+	static fromImageAndSizeInFrames(image, sizeInFrames)
+	{
+		var animation =
+			Animation.fromImageBaseAndSizeInFrames(image, sizeInFrames);
+
+		return new AnimationGroup
+		(
+			image.name,
+			[ animation ]
+		);
+	}
+
 	animationCurrent()
 	{
 		return this.animations[0];
@@ -72,6 +117,14 @@ class AnimationSequence
 
 	imageCurrentForAnimation(animation)
 	{
-		return animation.imageBase;
+		var frameSizeInPixels =
+			animation.frameSizeInPixels();
+
+		var returnValue = ImagePartial.fromImageAndSize
+		(
+			animation.imageBase,
+			frameSizeInPixels
+		);
+		return returnValue;
 	}
 }

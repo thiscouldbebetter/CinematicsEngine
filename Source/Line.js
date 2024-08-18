@@ -197,7 +197,13 @@ class Line
 			{
 				var actorName = operand0;
 				var actorImage = showing.scene.imageByName(actorName);
-				var actorAnimationGroup = AnimationGroup.fromImage(actorImage);
+				var actorImageSizeInFrames = Coords.fromString(operand2);
+				var actorAnimationGroup =
+					AnimationGroup.fromImageAndSizeInFrames
+					(
+						actorImage,
+						actorImageSizeInFrames // todo
+					);
 				var actor = new Actor(actorName, actorAnimationGroup);
 				showing.scene.actorAdd(actor);
 			}
