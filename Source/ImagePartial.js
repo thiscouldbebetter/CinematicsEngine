@@ -30,6 +30,16 @@ class ImagePartial
 		return returnValue;
 	}
 
+	static fromImageSizeAndOffset(image, size, offset)
+	{
+		var returnValue = new ImagePartial
+		(
+			image, size, offset
+		);
+
+		return returnValue;
+	}
+
 	drawToGraphicsAtPos(graphics, pos)
 	{
 		this.image.drawToGraphicsAtPos(graphics, pos);

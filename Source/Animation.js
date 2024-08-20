@@ -8,7 +8,7 @@ class Animation
 			imageBaseSizeInFrames || Coords.ones();
 		this.imageBase = imageBase;
 		this.sequences =
-			sequences || [ AnimationSequence.default() ];
+			sequences || [ AnimationFrameSequence.default() ];
 	}
 
 	static fromImageBase(imageBase)
@@ -58,6 +58,12 @@ class Animation
 	{
 		return this.sequences[0]; // todo
 	}
+
+	update()
+	{
+		var sequenceCurrent = this.sequenceCurrent();
+		sequenceCurrent.update();
+	}
 }
 
 class AnimationGroup
@@ -100,19 +106,40 @@ class AnimationGroup
 		var imageCurrent = animation.imageCurrent();
 		return imageCurrent;
 	}
+
+	update()
+	{
+		var animationCurrent = this.animationCurrent();
+		animationCurrent.update();
+	}
 }
 
-class AnimationSequence
+class AnimationFrameSequence
 {
-	constructor(boundsWithinImageBase, frameCount)
+	constructor(boundsWithinImageBase, ticksToHold, repeats)
 	{
 		this.boundsWithinImageBase = boundsWithinImageBase;
-		this.frameCount = frameCount;
+		this.ticksToHold = ticksToHold || 1;
+		this.repeats = repeats || false;
+
+		this.frameIndexCurrent = 0;
+		this.ticksOnFrameCurrent = 0;
+		this._done = false;
 	}
 
 	static default()
 	{
-		return new AnimationSequence(null, null);
+		return new AnimationFrameSequence(null, null, null);
+	}
+
+	done()
+	{
+		return this._done;
+	}
+
+	frameCurrentIndex()
+	{
+		return 0; // todo
 	}
 
 	imageCurrentForAnimation(animation)
@@ -120,11 +147,46 @@ class AnimationSequence
 		var frameSizeInPixels =
 			animation.frameSizeInPixels();
 
-		var returnValue = ImagePartial.fromImageAndSize
+		var frameCurrentIndex = this.frameCurrentIndex();
+		var frameOffsetInFrames =
+			new Coords(frameCurrentIndex, 0);
+		var frameOffsetInPixels =
+			frameOffsetInFrames.multiply(frameSizeInPixels);
+
+		var returnValue = ImagePartial.fromImageSizeAndOffset
 		(
 			animation.imageBase,
-			frameSizeInPixels
+			frameSizeInPixels,
+			frameOffsetInPixels
 		);
+
 		return returnValue;
+	}
+
+	update()
+	{
+		var isStarted =
+			this.ticksOnFrameCurrent != null;
+
+		if (isStarted == false)
+		{
+			this.ticksOnFrameCurrent = 0;
+		}
+		else
+		{
+			this.ticksOnFrameCurrent++;
+
+			if (this.ticksOnFrameCurrent >= this.ticksToHold)
+			{
+				if (this.repeats)
+				{
+					this.ticksOnFrameCurrent = 0;
+				}
+				else
+				{
+					this._done = true;
+				}
+			}
+		}
 	}
 }
